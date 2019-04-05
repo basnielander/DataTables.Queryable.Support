@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataTables.Sample.Domain\DataTables.Sample.Domain.csproj" />
-    <ProjectReference Include="..\DataTables.Support\DataTables.Queryable.Support.csproj" />
   </ItemGroup>
 
 </Project>

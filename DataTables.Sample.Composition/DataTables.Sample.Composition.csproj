@@ -9,9 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataTables.Queryable.Support\DataTables.Queryable.Support.csproj" />
     <ProjectReference Include="..\DataTables.Sample.Data\DataTables.Sample.Data.csproj" />
     <ProjectReference Include="..\DataTables.Sample.Domain\DataTables.Sample.Domain.csproj" />
-    <ProjectReference Include="..\DataTables.Support\DataTables.Queryable.Support.csproj" />
   </ItemGroup>
 
 </Project>

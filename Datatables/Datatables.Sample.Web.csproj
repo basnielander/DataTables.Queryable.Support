@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataTables.Sample.Composition\DataTables.Sample.Composition.csproj" />
-    <ProjectReference Include="..\DataTables.Support\DataTables.Queryable.Support.csproj" />
   </ItemGroup>
 
 </Project>
