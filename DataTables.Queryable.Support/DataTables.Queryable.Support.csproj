@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <AssemblyOriginatorKeyFile>datatables.support.pfx</AssemblyOriginatorKeyFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.4.0-rc</Version>
+    <Authors>B. Nielander</Authors>
+    <Company />
+    <PackageTags>DataTables AutoMapper LINQ Expressions jQuery</PackageTags>
+    <PackageId>DataTables.Queryable.Support</PackageId>
+    <Product>DataTables.Queryable.Support</Product>
+    <AssemblyName>DataTables.Queryable.Support</AssemblyName>
+    <RootNamespace>DataTables.Queryable.Support</RootNamespace>
+    <Description>Package offers support for processing DataTables requests using IQueryable Expressions. Search, filter and sorting specified in DataTables request are (automatically) translated from Viewmodel Expressions in the UI layer to Domain Expressions using this library in combination with AutoMapper.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="8.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="2.0.1" />
+    <PackageReference Include="DataTables.AspNet.AspNetCore" Version="2.0.2" />
+    <PackageReference Include="NuGet.CommandLine" Version="4.9.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
