@@ -24,19 +24,31 @@ namespace DataTables.Queryable.Support.Queryables
             };
 
         public QueryablesProcessor(IMapper mapper)
-            : this(mapper, DefaultExpressionCreators)
-        { 
+        {
+            this.mapper = mapper;
+
+            PropertyExpressionCreators = DefaultExpressionCreators;
         }
 
         public QueryablesProcessor(IMapper mapper, IEnumerable<IPropertyExpressionCreator> propertyExpressionCreators) 
         {
             this.mapper = mapper;
+            
+            PropertyExpressionCreators = MergeCreators(propertyExpressionCreators);
+        }
 
-            if (propertyExpressionCreators == null || propertyExpressionCreators.Count() == 0)
+        private IEnumerable<IPropertyExpressionCreator> MergeCreators(IEnumerable<IPropertyExpressionCreator> newPropertyExpressionCreators)
+        {
+            if (newPropertyExpressionCreators == null || newPropertyExpressionCreators.Any() == false)
             {
-                propertyExpressionCreators = DefaultExpressionCreators;
+                return DefaultExpressionCreators;
             }
-            PropertyExpressionCreators = propertyExpressionCreators;
+
+            var combinedCreators = DefaultExpressionCreators.Where(creator => !newPropertyExpressionCreators.Any(newCreator => newCreator.TargetType == creator.TargetType)).ToList();
+
+            combinedCreators.AddRange(newPropertyExpressionCreators);
+
+            return combinedCreators;
         }
 
         public IEnumerable<IPropertyExpressionCreator> PropertyExpressionCreators { get; set; }
