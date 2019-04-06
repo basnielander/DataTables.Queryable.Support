@@ -1,6 +1,7 @@
 ﻿using DataTables.AspNet.Core;
 using System;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace DataTables.Queryable.Support.Queryables.Expressions
 {
@@ -46,7 +47,7 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
             {
                 @out = Convert(value);                
             }
-            catch
+            catch (Exception exc)
             {
                 @out = default(TColumn);
                 convertSuccessfull = false;
@@ -55,6 +56,11 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
             return convertSuccessfull;
         }
 
-        protected abstract TColumn Convert(string value);
+        protected virtual TColumn Convert(string value)
+        {
+            var parseMethod = typeof(TColumn).GetMethod("Parse", new[] { typeof(string) });
+
+            return (TColumn)parseMethod.Invoke(null, new[] { value });
+        }
     }
 }

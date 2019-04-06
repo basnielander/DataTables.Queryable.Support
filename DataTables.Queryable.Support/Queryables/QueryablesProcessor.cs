@@ -7,27 +7,16 @@ using System.Linq;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace DataTables.Queryable.Support.Queryables
 {
     public class QueryablesProcessor : IDataTablesRequestProcessor
     {
         private readonly IMapper mapper;
-
-        public static readonly IList<IPropertyExpressionCreator> DefaultExpressionCreators = new List<IPropertyExpressionCreator>()
-            {
-                new IntegerEqualsExpressionCreator(),
-                new BooleanEqualsExpressionCreator(),
-                new DateTimeEqualsExpressionCreator(),
-                new DecimalEqualsExpressionCreator(),
-                new StringContainsExpressionCreator(),
-            };
-
-        public QueryablesProcessor(IMapper mapper)
+        
+        public QueryablesProcessor(IMapper mapper) : this(mapper, null)
         {
-            this.mapper = mapper;
-
-            PropertyExpressionCreators = DefaultExpressionCreators;
         }
 
         public QueryablesProcessor(IMapper mapper, IEnumerable<IPropertyExpressionCreator> propertyExpressionCreators) 
@@ -39,12 +28,14 @@ namespace DataTables.Queryable.Support.Queryables
 
         private IEnumerable<IPropertyExpressionCreator> MergeCreators(IEnumerable<IPropertyExpressionCreator> newPropertyExpressionCreators)
         {
+            var defaultCreators = GetDefaultExpressionCreators();
+
             if (newPropertyExpressionCreators == null || newPropertyExpressionCreators.Any() == false)
             {
-                return DefaultExpressionCreators;
+                return defaultCreators;
             }
 
-            var combinedCreators = DefaultExpressionCreators.Where(creator => !newPropertyExpressionCreators.Any(newCreator => newCreator.TargetType == creator.TargetType)).ToList();
+            var combinedCreators = defaultCreators.Where(creator => !newPropertyExpressionCreators.Any(newCreator => newCreator.TargetType == creator.TargetType)).ToList();
 
             combinedCreators.AddRange(newPropertyExpressionCreators);
 
@@ -127,5 +118,13 @@ namespace DataTables.Queryable.Support.Queryables
             return queryableWithPaging;
         }
 
+        private List<IPropertyExpressionCreator> GetDefaultExpressionCreators()
+        {
+            var defaultCreators = Assembly.GetCallingAssembly().GetTypes()
+                .Where(type => typeof(IPropertyExpressionCreator).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+                .Select(type => Activator.CreateInstance(type) as IPropertyExpressionCreator).ToList();
+
+            return defaultCreators;
+        }
     }
 }
