@@ -6,6 +6,6 @@ namespace DataTables.Queryable.Support
 {
     public interface IDataTablesRequestProcessor
     {
-        IDataTablesResponse CreateResponse<TSourceModel, TTargetModel>(IDataTablesRequest request, Func<IOrderedQueryable<TSourceModel>> getItemsMethod);
+        IDataTablesResponse CreateResponse<TSourceModel, TTargetModel>(IDataTablesRequest request, Func<IQueryable<TSourceModel>> getItemsMethod);
     }
 }

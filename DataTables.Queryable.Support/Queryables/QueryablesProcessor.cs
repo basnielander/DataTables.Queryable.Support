@@ -26,6 +26,24 @@ namespace DataTables.Queryable.Support.Queryables
             PropertyExpressionCreators = MergeCreators(propertyExpressionCreators);
         }
 
+        public IEnumerable<IPropertyExpressionCreator> PropertyExpressionCreators { get; private set; }
+
+        public IDataTablesResponse CreateResponse<TDomainModel, TViewModel>(IDataTablesRequest request, Func<IQueryable<TDomainModel>> getDomainModelItemsMethod)
+        {
+            var expressionCreator = new QueryablesExpressionCreator<TViewModel>(request, PropertyExpressionCreators);
+
+            var viewModelExpressions = expressionCreator.CreateExpressions();
+
+            var queryableUnfiltered = getDomainModelItemsMethod();
+            var queryableWithSearchAndColumnFiltering = ApplySearchAndColumnFilters(queryableUnfiltered, viewModelExpressions.GetCombinedSearchExpression());
+            var queryableWithSearchAndColumnFilteringAndSorting = ApplySort(queryableWithSearchAndColumnFiltering, viewModelExpressions.SortExpressions);
+            
+            var pagedDomainModelResults = ApplyPaging(request, queryableWithSearchAndColumnFilteringAndSorting).ToList();
+            var pagedViewModelResults = mapper.Map<List<TViewModel>>(pagedDomainModelResults);
+
+            return DataTablesResponse.Create(request, queryableUnfiltered.Count(), queryableWithSearchAndColumnFiltering.Count(), pagedViewModelResults);
+        }
+
         private IEnumerable<IPropertyExpressionCreator> MergeCreators(IEnumerable<IPropertyExpressionCreator> newPropertyExpressionCreators)
         {
             var defaultCreators = GetDefaultExpressionCreators();
@@ -42,25 +60,7 @@ namespace DataTables.Queryable.Support.Queryables
             return combinedCreators;
         }
 
-        public IEnumerable<IPropertyExpressionCreator> PropertyExpressionCreators { get; set; }
-
-        public IDataTablesResponse CreateResponse<TDomainModel, TViewModel>(IDataTablesRequest request, Func<IOrderedQueryable<TDomainModel>> getDomainModelItemsMethod)
-        {
-            var expressionCreator = new QueryablesExpressionCreator<TViewModel>(request, PropertyExpressionCreators);
-
-            var viewModelExpressions = expressionCreator.CreateExpressions();
-
-            var queryableUnfiltered = getDomainModelItemsMethod();
-            var queryableWithSearchAndColumnFiltering = ApplySearchAndColumnFilters(queryableUnfiltered, viewModelExpressions.GetCombinedSearchExpression());
-            var queryableWithSearchAndColumnFilteringAndSorting = ApplySort(queryableWithSearchAndColumnFiltering, viewModelExpressions.SortExpressions);
-            
-            var pagedDomainModelResults = ApplyPaging(request, queryableWithSearchAndColumnFilteringAndSorting).ToList();
-            var pagedViewModelResults = mapper.Map<List<TViewModel>>(pagedDomainModelResults);
-
-            return DataTablesResponse.Create(request, queryableUnfiltered.Count(), queryableWithSearchAndColumnFiltering.Count(), pagedViewModelResults);
-        }
-
-        private IOrderedQueryable<TDomainModel> ApplySearchAndColumnFilters<TDomainModel, TViewModel>(IOrderedQueryable<TDomainModel> queryableUnfiltered, Expression<Func<TViewModel, bool>> viewModelSearchExpression)
+        private IQueryable<TDomainModel> ApplySearchAndColumnFilters<TDomainModel, TViewModel>(IQueryable<TDomainModel> queryableUnfiltered, Expression<Func<TViewModel, bool>> viewModelSearchExpression)
         {
             var queryableWithSearchQuery = queryableUnfiltered;
             
@@ -73,7 +73,7 @@ namespace DataTables.Queryable.Support.Queryables
             return queryableWithSearchQuery;
         }
 
-        private IQueryable<TDomainModel> ApplySort<TDomainModel, TViewModel>(IOrderedQueryable<TDomainModel> queryableWithSearchQuery, IEnumerable<OrderExpression<TViewModel>> viewModelSortExpressions)
+        private IQueryable<TDomainModel> ApplySort<TDomainModel, TViewModel>(IQueryable<TDomainModel> queryableWithSearchQuery, IEnumerable<OrderExpression<TViewModel>> viewModelSortExpressions)
         {
             if (viewModelSortExpressions == null || viewModelSortExpressions.Count() == 0) return queryableWithSearchQuery;
 
@@ -89,17 +89,18 @@ namespace DataTables.Queryable.Support.Queryables
                 queryableWithSearchQuery = queryableWithSearchQuery.OrderByDescending(domainModelSortExpression) as IOrderedQueryable<TDomainModel>;
             }
 
+            if (queryableWithSearchQuery is IOrderedQueryable<TDomainModel>)
             foreach (var viewModelSortExpression in viewModelSortExpressions.Skip(1))
             {
                 domainModelSortExpression = mapper.MapExpression<Expression<Func<TDomainModel, object>>>(viewModelSortExpression.Expression);
 
                 if (viewModelSortExpression.SortDetails.Direction == SortDirection.Ascending)
                 {
-                    queryableWithSearchQuery = queryableWithSearchQuery.ThenBy(domainModelSortExpression) as IOrderedQueryable<TDomainModel>;
+                    queryableWithSearchQuery = ((IOrderedQueryable<TDomainModel>)queryableWithSearchQuery).ThenBy(domainModelSortExpression);
                 }
                 else
                 {
-                    queryableWithSearchQuery = queryableWithSearchQuery.ThenByDescending(domainModelSortExpression) as IOrderedQueryable<TDomainModel>;
+                    queryableWithSearchQuery = ((IOrderedQueryable<TDomainModel>)queryableWithSearchQuery).ThenByDescending(domainModelSortExpression) as IOrderedQueryable<TDomainModel>;
                 }
             }
 

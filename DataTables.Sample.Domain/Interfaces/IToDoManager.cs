@@ -7,6 +7,6 @@ namespace Datatables.Sample.Domain.Interfaces
 {
     public interface IToDoManager
     {
-        IOrderedQueryable<ToDoModel> SelectToDos();
+        IQueryable<ToDoModel> SelectToDos();
     }
 }

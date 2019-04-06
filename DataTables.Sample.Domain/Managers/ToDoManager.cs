@@ -14,7 +14,7 @@ namespace Datatables.Sample.Domain.Managers
         {
             this.toDoRepository = toDoRepository;
         }
-        public IOrderedQueryable<ToDoModel> SelectToDos()
+        public IQueryable<ToDoModel> SelectToDos()
         {
             return toDoRepository.SelectToDos();
         }

@@ -22,10 +22,10 @@ namespace Datatables.Sample.Data.Repositories
 
         public DataTablesContext Context { get; }
 
-        public IOrderedQueryable<ToDoModel> SelectToDos()
+        public IQueryable<ToDoModel> SelectToDos()
         {
             IQueryable<ToDo> items = Context.ToDos.Select(item => item);
-            return items.UseAsDataSource(mapper).For<ToDoModel>() as IOrderedQueryable<ToDoModel>;
+            return items.UseAsDataSource(mapper).For<ToDoModel>();
         }
     }
 }
