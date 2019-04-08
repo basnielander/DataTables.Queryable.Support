@@ -85,9 +85,12 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
 
             foreach (var column in sortingColumns)
             {
-                Expression<Func<TModel, object>> orderBy = GetSortExpression(column, column.Sort);
+                IEnumerable<Expression<Func<TModel, object>>> orderBys = GetSortExpression(column, column.Sort);
 
-                columnSortExpressions.Add(new OrderExpression<TModel>(column, column.Sort, orderBy));
+                foreach (var orderBy in orderBys)
+                {
+                    columnSortExpressions.Add(new OrderExpression<TModel>(column, column.Sort, orderBy));
+                }
             }
 
             return columnSortExpressions;            
@@ -116,10 +119,12 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
             return request.Search == null || string.IsNullOrWhiteSpace(request.Search.Value);
         }
 
-        private Expression<Func<TModel, object>> GetSortExpression(IColumn column, ISort sortValue)
+        private IEnumerable<Expression<Func<TModel, object>>> GetSortExpression(IColumn column, ISort sortValue)
         {
             var sourcePropertyName = column.Field ?? column.Name;
             var sourceProperty = GetProperty<TModel>.ByName(sourcePropertyName);
+            var sourcePropertyType = sourceProperty.PropertyType;
+            var sourceNullableType = Nullable.GetUnderlyingType(sourcePropertyType);
 
             if (sourceProperty == null)
             {
@@ -127,7 +132,20 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
             }
 
             var expression = Expression.Property(parameterExpression, sourceProperty);
-            return Expression.Lambda<Func<TModel, object>>(expression, new ParameterExpression[] { parameterExpression }); ;
+
+            if (sourceNullableType != null)
+            {
+                var hasValueExpression = Expression.Convert(Expression.Property(expression, "HasValue"), typeof(object)); 
+                var valueExpression = Expression.Convert(Expression.Property(expression, "Value"), typeof(object));
+
+                yield return Expression.Lambda<Func<TModel, object>>(hasValueExpression, new ParameterExpression[] { parameterExpression });
+                yield return Expression.Lambda<Func<TModel, object>>(valueExpression, new ParameterExpression[] { parameterExpression });
+            }
+            else
+            {
+                yield return Expression.Lambda<Func<TModel, object>>(expression, new ParameterExpression[] { parameterExpression });
+            }
+            
         }
 
         private Expression<Func<TModel, bool>> GetFilterExpression(IColumn column, string filterValue)
