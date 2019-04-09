@@ -23,14 +23,17 @@ namespace DataTables.Queryable.Support.Queryables
         {
             this.mapper = mapper;
             
-            PropertyExpressionCreators = MergeCreators(propertyExpressionCreators);
+            SearchPropertyExpressionCreators = MergeCreators(propertyExpressionCreators, ExpressionCreatorSupport.Search);
+            ColumnFilterPropertyExpressionCreators = MergeCreators(propertyExpressionCreators, ExpressionCreatorSupport.ColumnFilter);
         }
 
-        public IEnumerable<IPropertyExpressionCreator> PropertyExpressionCreators { get; private set; }
+        public IEnumerable<IPropertyExpressionCreator> SearchPropertyExpressionCreators { get; private set; }
+
+        public IEnumerable<IPropertyExpressionCreator> ColumnFilterPropertyExpressionCreators { get; private set; }
 
         public IDataTablesResponse CreateResponse<TDomainModel, TViewModel>(IDataTablesRequest request, Func<IQueryable<TDomainModel>> getDomainModelItemsMethod)
         {
-            var expressionCreator = new QueryablesExpressionCreator<TViewModel>(request, PropertyExpressionCreators);
+            var expressionCreator = new QueryablesExpressionCreator<TViewModel>(request, SearchPropertyExpressionCreators, ColumnFilterPropertyExpressionCreators);
 
             var viewModelExpressions = expressionCreator.CreateExpressions();
 
@@ -44,9 +47,9 @@ namespace DataTables.Queryable.Support.Queryables
             return DataTablesResponse.Create(request, queryableUnfiltered.Count(), queryableWithSearchAndColumnFiltering.Count(), pagedViewModelResults);
         }
 
-        private IEnumerable<IPropertyExpressionCreator> MergeCreators(IEnumerable<IPropertyExpressionCreator> newPropertyExpressionCreators)
+        private IEnumerable<IPropertyExpressionCreator> MergeCreators(IEnumerable<IPropertyExpressionCreator> newPropertyExpressionCreators, ExpressionCreatorSupport support)
         {
-            var defaultCreators = GetDefaultExpressionCreators();
+            var defaultCreators = GetDefaultExpressionCreators().Where(creator => (support & creator.Supports) == support);
 
             if (newPropertyExpressionCreators == null || newPropertyExpressionCreators.Any() == false)
             {

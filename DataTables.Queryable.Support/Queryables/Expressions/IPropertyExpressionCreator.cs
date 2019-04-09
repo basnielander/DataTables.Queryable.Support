@@ -8,6 +8,8 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
     {
         Type TargetType { get; }
 
+        ExpressionCreatorSupport Supports { get; }
+
         Expression<Func<TModel, bool>> CreateExpression<TModel>(IColumn column, string filterOrSearchValue, ParameterExpression parameterExpression);
     }
 }

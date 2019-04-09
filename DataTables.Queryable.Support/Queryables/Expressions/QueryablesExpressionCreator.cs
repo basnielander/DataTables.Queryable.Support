@@ -10,13 +10,15 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
     public class QueryablesExpressionCreator<TModel>
     {
         private readonly IDataTablesRequest request;
-        private readonly IEnumerable<IPropertyExpressionCreator> propertyExpressionCreators;
+        private readonly IEnumerable<IPropertyExpressionCreator> searchPropertyExpressionCreators;
+        private readonly IEnumerable<IPropertyExpressionCreator> columnFilterPropertyExpressionCreators;
         private readonly ParameterExpression parameterExpression = Expression.Parameter(typeof(TModel), "item");
 
-        public QueryablesExpressionCreator(IDataTablesRequest request, IEnumerable<IPropertyExpressionCreator> propertyExpressionCreators)
+        public QueryablesExpressionCreator(IDataTablesRequest request, IEnumerable<IPropertyExpressionCreator> searchPropertyExpressionCreators, IEnumerable<IPropertyExpressionCreator> columnFilterPropertyExpressionCreators)
         {
             this.request = request;
-            this.propertyExpressionCreators = propertyExpressionCreators;            
+            this.searchPropertyExpressionCreators = searchPropertyExpressionCreators;
+            this.columnFilterPropertyExpressionCreators = columnFilterPropertyExpressionCreators;
         }
 
         public QueryableExpressions<TModel> CreateExpressions()
@@ -42,7 +44,7 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
 
             foreach (var column in searchableColumns)
             {
-                Expression<Func<TModel, bool>> contains = GetFilterExpression(column, request.Search.Value);
+                Expression<Func<TModel, bool>> contains = GetFilterExpression(column, request.Search.Value, searchPropertyExpressionCreators);
 
                 if (contains != null)
                 {
@@ -66,7 +68,7 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
 
             foreach (var column in columnsWithFilters)
             {
-                Expression<Func<TModel, bool>> contains = GetFilterExpression(column, column.Search.Value);
+                Expression<Func<TModel, bool>> contains = GetFilterExpression(column, column.Search.Value, columnFilterPropertyExpressionCreators);
 
                 columnFilterExpressions.Add(new FilterExpression<TModel>(column, column.Search, contains));
             }
@@ -148,7 +150,7 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
             
         }
 
-        private Expression<Func<TModel, bool>> GetFilterExpression(IColumn column, string filterValue)
+        private Expression<Func<TModel, bool>> GetFilterExpression(IColumn column, string filterValue, IEnumerable<IPropertyExpressionCreator> propertyExpressionCreators)
         {
             var sourcePropertyName = column.Field ?? column.Name;
             var sourceProperty = GetProperty<TModel>.ByName(sourcePropertyName);
@@ -162,7 +164,7 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
             var sourceNullableType = Nullable.GetUnderlyingType(sourcePropertyType);
 
             var expressionCreator = propertyExpressionCreators.FirstOrDefault(creator => creator.TargetType.Equals(sourcePropertyType) ||
-                                                                                          creator.TargetType.Equals(sourceNullableType));
+                                                                                         creator.TargetType.Equals(sourceNullableType));
 
             if (expressionCreator == null)
             {

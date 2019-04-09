@@ -36,3 +36,12 @@ public IActionResult GetToDos(IDataTablesRequest request)
     return new DataTablesJsonResult(response, true);
 }
 ```
+
+Where 'ToDoModel' is a model from, for example, a domain layer and 'ToDoViewModel' the viewmodel from the UI layer. 
+requestProcessor.CreateResponse() takes two parameters, the Datatables request and a delegate for the method that returns an IQueryable\<ToDoModel> object.
+The CreateResponse() takes care of running the delegate and translating the DataTables request (search, column filters and sorting) from ViewModel Expressions to Domain model Expressions to the appropriate Where().OrderBy().Skip().Take() query.
+
+# Customizations
+QueryablesProcessor class by default only needs an IMapper instance. For customizing the way DataTables search and/or column filters are translated to Where() Expressions it is possible to define your own, so called, PropertyExpressionCreators. 
+A PropertyExpressionCreator (class derived from IPropertyExpressionCreator) translates a Search and/or ColumnFilter datatables query (ISearch) to an Lambda Expression.
+For example, the StringContainsExpressionCreator class translates the query 'Test' to item.property.Contains("Test").

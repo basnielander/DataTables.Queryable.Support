@@ -8,6 +8,8 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
     {
         public Type TargetType => typeof(string);
 
+        public ExpressionCreatorSupport Supports => ExpressionCreatorSupport.Search | ExpressionCreatorSupport.ColumnFilter;
+
         public Expression<Func<TModel, bool>> CreateExpression<TModel>(IColumn column, string filterOrSearchValue, ParameterExpression parameterExpression) 
         {
             var sourcePropertyName = column.Field ?? column.Name;
