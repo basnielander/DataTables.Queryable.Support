@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Datatables\Datatables.Sample.Web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DataTablesQueryable\" />
+  </ItemGroup>
+
 </Project>
