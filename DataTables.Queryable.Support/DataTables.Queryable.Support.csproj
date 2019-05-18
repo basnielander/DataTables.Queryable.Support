@@ -6,7 +6,7 @@
     <DelaySign>false</DelaySign>
     <AssemblyOriginatorKeyFile>datatables.support.pfx</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.8.1-rc</Version>
+    <Version>0.8.2</Version>
     <Authors>B. Nielander</Authors>
     <Company />
     <PackageTags>DataTables AutoMapper LINQ Expressions jQuery</PackageTags>

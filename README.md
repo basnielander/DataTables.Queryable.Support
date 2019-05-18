@@ -45,3 +45,6 @@ The CreateResponse() takes care of running the delegate and translating the Data
 QueryablesProcessor class by default only needs an IMapper instance. For customizing the way DataTables search and/or column filters are translated to Where() Expressions it is possible to define your own, so called, PropertyExpressionCreators. 
 A PropertyExpressionCreator (class derived from IPropertyExpressionCreator) translates a Search and/or ColumnFilter datatables query (ISearch) to an Lambda Expression.
 For example, the StringContainsExpressionCreator class translates the query 'Test' to item.property.Contains("Test").
+
+##Note!
+The default expression creator classes do not support search or column filters based on Regular Expressions. 

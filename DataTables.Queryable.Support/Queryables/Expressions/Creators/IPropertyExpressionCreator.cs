@@ -2,7 +2,7 @@
 using System;
 using System.Linq.Expressions;
 
-namespace DataTables.Queryable.Support.Queryables.Expressions
+namespace DataTables.Queryable.Support.Queryables.Expressions.Creators
 {
     public interface IPropertyExpressionCreator
     {
@@ -10,6 +10,6 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
 
         ExpressionCreatorSupport Supports { get; }
 
-        Expression<Func<TModel, bool>> CreateExpression<TModel>(IColumn column, string filterOrSearchValue, ParameterExpression parameterExpression);
+        Expression<Func<TModel, bool>> CreateExpression<TModel>(IColumn column, ISearch search, ParameterExpression parameterExpression);
     }
 }

@@ -8,6 +8,7 @@ using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using System.Linq.Expressions;
 using System.Reflection;
+using DataTables.Queryable.Support.Queryables.Expressions.Creators;
 
 namespace DataTables.Queryable.Support.Queryables
 {

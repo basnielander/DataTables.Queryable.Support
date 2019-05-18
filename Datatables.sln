@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Datatables.Sample.Web", "Datatables\Datatables.Sample.Web.csproj", "{AA2D2D52-9CE7-4C77-A981-070B5798BF25}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTables.Tests", "DataTables.Tests\DataTables.Tests.csproj", "{3B3EF466-9170-45D8-93E9-B8B9BD7F4514}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTables.Queryable.Support", "DataTables.Queryable.Support\DataTables.Queryable.Support.csproj", "{F9D801B6-B600-40FF-9124-815EE7827D8D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTables.Sample.Data", "DataTables.Sample.Data\DataTables.Sample.Data.csproj", "{99AA06C9-B27E-4290-816A-2B7E740C92EC}"
@@ -22,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TestData.sql = TestData.sql
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTables.Queryable.Support.Tests", "DataTables.Queryable.Support.Tests\DataTables.Queryable.Support.Tests.csproj", "{6EEE0ED1-C4B6-4457-A312-378B282C5634}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,10 +32,6 @@ Global
 		{AA2D2D52-9CE7-4C77-A981-070B5798BF25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA2D2D52-9CE7-4C77-A981-070B5798BF25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA2D2D52-9CE7-4C77-A981-070B5798BF25}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B3EF466-9170-45D8-93E9-B8B9BD7F4514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B3EF466-9170-45D8-93E9-B8B9BD7F4514}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B3EF466-9170-45D8-93E9-B8B9BD7F4514}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B3EF466-9170-45D8-93E9-B8B9BD7F4514}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F9D801B6-B600-40FF-9124-815EE7827D8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F9D801B6-B600-40FF-9124-815EE7827D8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9D801B6-B600-40FF-9124-815EE7827D8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -52,6 +48,10 @@ Global
 		{2D9563CA-DD00-43E9-99E0-577B7BEC0C41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D9563CA-DD00-43E9-99E0-577B7BEC0C41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D9563CA-DD00-43E9-99E0-577B7BEC0C41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EEE0ED1-C4B6-4457-A312-378B282C5634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EEE0ED1-C4B6-4457-A312-378B282C5634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EEE0ED1-C4B6-4457-A312-378B282C5634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EEE0ED1-C4B6-4457-A312-378B282C5634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

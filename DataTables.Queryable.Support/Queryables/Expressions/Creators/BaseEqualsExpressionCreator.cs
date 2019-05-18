@@ -3,7 +3,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace DataTables.Queryable.Support.Queryables.Expressions
+namespace DataTables.Queryable.Support.Queryables.Expressions.Creators
 {
     public abstract class BaseEqualsExpressionCreator<TColumn> : IPropertyExpressionCreator
     {
@@ -11,15 +11,20 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
 
         public ExpressionCreatorSupport Supports => ExpressionCreatorSupport.Search | ExpressionCreatorSupport.ColumnFilter;
 
-        public virtual Expression<Func<TModel, bool>> CreateExpression<TModel>(IColumn column, string filterOrSearchValue, ParameterExpression parameterExpression)
+        public virtual Expression<Func<TModel, bool>> CreateExpression<TModel>(IColumn column, ISearch search, ParameterExpression parameterExpression)
         {
+            if (search.IsRegex)
+            {
+                throw new NotSupportedException($"The expression creator {nameof(StringContainsExpressionCreator)} does not support regular expressions.");
+            }
+
             var sourcePropertyName = column.Field ?? column.Name;
             var sourceProperty = GetProperty<TModel>.ByName(sourcePropertyName);
             var sourcePropertyType = sourceProperty.PropertyType;
             var sourceNullableType = Nullable.GetUnderlyingType(sourcePropertyType);
 
             Expression property = Expression.Property(parameterExpression, sourceProperty);
-            bool canBeConvertedToColumnType = TryConvert(filterOrSearchValue, out TColumn filterValue);
+            bool canBeConvertedToColumnType = TryConvert(search.Value, out TColumn filterValue);
 
             if (canBeConvertedToColumnType)
             {

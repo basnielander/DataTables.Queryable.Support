@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataTables.Queryable.Support.Queryables.Expressions
+namespace DataTables.Queryable.Support.Queryables.Expressions.Creators
 {
     public enum ExpressionCreatorSupport
     {

@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace DataTables.Queryable.Support.Queryables.Expressions
+namespace DataTables.Queryable.Support.Queryables.Expressions.Creators
 {
     public class QueryablesExpressionCreator<TModel>
     {
@@ -44,7 +44,7 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
 
             foreach (var column in searchableColumns)
             {
-                Expression<Func<TModel, bool>> contains = GetFilterExpression(column, request.Search.Value, searchPropertyExpressionCreators);
+                Expression<Func<TModel, bool>> contains = GetFilterExpression(column, request.Search, searchPropertyExpressionCreators);
 
                 if (contains != null)
                 {
@@ -68,7 +68,7 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
 
             foreach (var column in columnsWithFilters)
             {
-                Expression<Func<TModel, bool>> contains = GetFilterExpression(column, column.Search.Value, columnFilterPropertyExpressionCreators);
+                Expression<Func<TModel, bool>> contains = GetFilterExpression(column, column.Search, columnFilterPropertyExpressionCreators);
 
                 columnFilterExpressions.Add(new FilterExpression<TModel>(column, column.Search, contains));
             }
@@ -150,7 +150,7 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
             
         }
 
-        private Expression<Func<TModel, bool>> GetFilterExpression(IColumn column, string filterValue, IEnumerable<IPropertyExpressionCreator> propertyExpressionCreators)
+        private Expression<Func<TModel, bool>> GetFilterExpression(IColumn column, ISearch search, IEnumerable<IPropertyExpressionCreator> propertyExpressionCreators)
         {
             var sourcePropertyName = column.Field ?? column.Name;
             var sourceProperty = GetProperty<TModel>.ByName(sourcePropertyName);
@@ -171,7 +171,7 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
                 throw new DataTablesException(string.Format(CultureInfo.CurrentUICulture, "Cannot find an Expression Creator for type '{0}'", sourceProperty.PropertyType.FullName));
             }
 
-            return expressionCreator.CreateExpression<TModel>(column, filterValue, parameterExpression);            
+            return expressionCreator.CreateExpression<TModel>(column, search, parameterExpression);            
         }
         
     }
