@@ -4,19 +4,23 @@ using System.Linq.Expressions;
 
 namespace DataTables.Queryable.Support.Queryables.Expressions.Creators
 {
-    public class StringContainsExpressionCreator : IPropertyExpressionCreator
-    {
-        public Type TargetType => typeof(string);
+    public class StringContainsExpressionCreator : BaseExpressionCreator<string>
+    {        
+        public override ExpressionCreatorSupport Supports => ExpressionCreatorSupport.Search | ExpressionCreatorSupport.ColumnFilter;
 
-        public ExpressionCreatorSupport Supports => ExpressionCreatorSupport.Search | ExpressionCreatorSupport.ColumnFilter;
+        public override bool SupportsReqularExpressions => false;
 
-        public Expression<Func<TModel, bool>> CreateExpression<TModel>(IColumn column, ISearch search, ParameterExpression parameterExpression) 
-        {
-            if (search.IsRegex)
-            {
-                throw new NotSupportedException($"The expression creator {nameof(StringContainsExpressionCreator)} does not support regular expressions.");
-            }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TModel"></typeparam>
+        /// <param name="column"></param>
+        /// <param name="search"></param>
+        /// <param name="parameterExpression"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException">Thrown when the searchquery is based on an regular expression</exception>
+        public override Expression<Func<TModel, bool>> GetExpression<TModel>(IColumn column, ISearch search, ParameterExpression parameterExpression) 
+        {            
             var sourcePropertyName = column.Field ?? column.Name;
             var sourceProperty = GetProperty<TModel>.ByName(sourcePropertyName);
 

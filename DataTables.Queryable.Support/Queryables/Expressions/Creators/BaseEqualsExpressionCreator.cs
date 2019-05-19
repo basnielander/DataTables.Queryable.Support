@@ -5,19 +5,14 @@ using System.Reflection;
 
 namespace DataTables.Queryable.Support.Queryables.Expressions.Creators
 {
-    public abstract class BaseEqualsExpressionCreator<TColumn> : IPropertyExpressionCreator
-    {
-        public Type TargetType => typeof(TColumn);
+    public abstract class BaseEqualsExpressionCreator<TColumn> : BaseExpressionCreator<TColumn>
+    {        
+        public override ExpressionCreatorSupport Supports => ExpressionCreatorSupport.Search | ExpressionCreatorSupport.ColumnFilter;
 
-        public ExpressionCreatorSupport Supports => ExpressionCreatorSupport.Search | ExpressionCreatorSupport.ColumnFilter;
-
-        public virtual Expression<Func<TModel, bool>> CreateExpression<TModel>(IColumn column, ISearch search, ParameterExpression parameterExpression)
-        {
-            if (search.IsRegex)
-            {
-                throw new NotSupportedException($"The expression creator {nameof(StringContainsExpressionCreator)} does not support regular expressions.");
-            }
-
+        public override bool SupportsReqularExpressions => false;
+        
+        public override Expression<Func<TModel, bool>> GetExpression<TModel>(IColumn column, ISearch search, ParameterExpression parameterExpression)
+        {            
             var sourcePropertyName = column.Field ?? column.Name;
             var sourceProperty = GetProperty<TModel>.ByName(sourcePropertyName);
             var sourcePropertyType = sourceProperty.PropertyType;
@@ -54,7 +49,7 @@ namespace DataTables.Queryable.Support.Queryables.Expressions.Creators
             {
                 @out = Convert(value);                
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 @out = default(TColumn);
                 convertSuccessfull = false;
