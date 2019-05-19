@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -10,16 +11,16 @@ namespace DataTables.Queryable.Support.Queryables.Expressions
     {
         public QueryableExpressions(IEnumerable<FilterExpression<TModel>> searchExpressions, IEnumerable<FilterExpression<TModel>> columnFilterExpressions, IEnumerable<OrderExpression<TModel>> sortExpressions)
         {
-            SearchExpressions = searchExpressions ?? new List<FilterExpression<TModel>>();
-            ColumnFilterExpressions = columnFilterExpressions ?? new List<FilterExpression<TModel>>();
-            SortExpressions = sortExpressions ?? new List<OrderExpression<TModel>>();
+            SearchExpressions = (searchExpressions?.ToList() ?? new List<FilterExpression<TModel>>()).AsReadOnly();
+            ColumnFilterExpressions = (columnFilterExpressions?.ToList() ?? new List<FilterExpression<TModel>>()).AsReadOnly();
+            SortExpressions = (sortExpressions?.ToList() ?? new List<OrderExpression<TModel>>()).AsReadOnly();
         }
 
-        public IEnumerable<FilterExpression<TModel>> SearchExpressions { get; }
+        public ReadOnlyCollection<FilterExpression<TModel>> SearchExpressions { get; }
 
-        public IEnumerable<FilterExpression<TModel>> ColumnFilterExpressions { get; }
+        public ReadOnlyCollection<FilterExpression<TModel>> ColumnFilterExpressions { get; }
 
-        public IEnumerable<OrderExpression<TModel>> SortExpressions { get; }
+        public ReadOnlyCollection<OrderExpression<TModel>> SortExpressions { get; }
 
         public Expression<Func<TModel, bool>> GetCombinedSearchExpression()
         {
