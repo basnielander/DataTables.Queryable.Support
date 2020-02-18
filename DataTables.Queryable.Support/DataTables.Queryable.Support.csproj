@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,7 +7,7 @@
     <AssemblyOriginatorKeyFile>datatables.support.pfx</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>0.8.2</Version>
-    <Authors>B. Nielander</Authors>
+    <Authors>B. Nielander, Fixes: INGCRM Dev Team</Authors>
     <Company />
     <PackageTags>DataTables AutoMapper LINQ Expressions jQuery</PackageTags>
     <PackageId>DataTables.Queryable.Support</PackageId>

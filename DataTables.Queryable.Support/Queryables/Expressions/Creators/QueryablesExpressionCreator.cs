@@ -143,6 +143,10 @@ namespace DataTables.Queryable.Support.Queryables.Expressions.Creators
                 yield return Expression.Lambda<Func<TModel, object>>(hasValueExpression, new ParameterExpression[] { parameterExpression });
                 yield return Expression.Lambda<Func<TModel, object>>(valueExpression, new ParameterExpression[] { parameterExpression });
             }
+            else if (sourcePropertyType.IsValueType)
+            {
+                yield return Expression.Lambda<Func<TModel, object>>(Expression.Convert(expression, typeof(object)), new ParameterExpression[] { parameterExpression });
+            }
             else
             {
                 yield return Expression.Lambda<Func<TModel, object>>(expression, new ParameterExpression[] { parameterExpression });
